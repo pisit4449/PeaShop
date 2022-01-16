@@ -1,5 +1,6 @@
 //import 'dart:js';
 
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -11,6 +12,22 @@ import 'package:peashop/widget/show_image.dart';
 import 'package:peashop/widget/show_title.dart';
 
 class MyDialog {
+  Future<Null> showProgressDiaLog(BuildContext context) async {
+    showDialog(
+      context: context,
+      builder: (context) => WillPopScope(
+        child: Center(
+            child: CircularProgressIndicator(
+          color: Colors.white,
+          backgroundColor: MyConstant.dark,
+        )),
+        onWillPop: () async {
+          return false;
+        },
+      ),
+    );
+  }
+
   Future<Null> alertLocationService(
       BuildContext context, String title, String message) async {
     showDialog(

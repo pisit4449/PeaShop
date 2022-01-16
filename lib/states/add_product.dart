@@ -1,9 +1,12 @@
 import 'dart:io';
+import 'dart:math';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:peashop/utility/my_constant.dart';
+import 'package:peashop/utility/my_dialog.dart';
 import 'package:peashop/widget/show_image.dart';
 import 'package:peashop/widget/show_title.dart';
 
@@ -36,6 +39,11 @@ class _AddProductState extends State<AddProduct> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          IconButton(
+              onPressed: () => processAddProduct(),
+              icon: Icon(Icons.cloud_upload))
+        ],
         title: Text("Add Product"),
       ),
       body: LayoutBuilder(
@@ -71,12 +79,50 @@ class _AddProductState extends State<AddProduct> {
       child: ElevatedButton(
         style: MyConstant().myButtonStyle(),
         onPressed: () {
-          if (formKey.currentState!.validate()) {
-          } else {}
+          processAddProduct();
         },
         child: Text('Add Product'),
       ),
     );
+  }
+
+  Future<Null> processAddProduct() async {
+    if (formKey.currentState!.validate()) {
+      bool checkFile = true;
+      for (var item in files) {
+        if (item == null) {
+          checkFile = false;
+        }
+      }
+      if (checkFile) {
+        // print('## choose 4 image success');
+
+        MyDialog().showProgressDiaLog(context);
+
+        String apiSaveProduct =
+            '${MyConstant.domain}/shoppingmall/saveProduct.php';
+
+        int loop = 0;
+        for (var item in files) {
+          int i = Random().nextInt(1000000000);
+          String nameFile = 'product$i.jpg';
+          Map<String, dynamic> map = {};
+          map['file'] =
+              await MultipartFile.fromFile(item!.path, filename: nameFile);
+          FormData data = FormData.fromMap(map);
+          await Dio().post(apiSaveProduct, data: data).then((value) {
+            print('Upload Success');
+            loop++;
+            if (loop >= files.length) {
+              Navigator.pop(context);
+            }
+          });
+        }
+      } else {
+        MyDialog()
+            .normalDialog(context, 'More Image', 'Please Choose More Image');
+      }
+    }
   }
 
   Future<Null> prodessImagePicker(ImageSource source, int index) async {
