@@ -5,6 +5,7 @@ import 'package:peashop/states/create_account.dart';
 import 'package:peashop/states/rider_service.dart';
 import 'package:peashop/states/seller_service.dart';
 import 'package:peashop/utility/my_constant.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final Map<String, WidgetBuilder> map = {
   '/authen': (BuildContext context) => Authen(),
@@ -14,15 +15,38 @@ final Map<String, WidgetBuilder> map = {
   '/riderService': (BuildContext context) => RiderService(),
 };
 
-String? initlalRoute ;
+String? initlalRoute;
 
-void main() {
-  initlalRoute = MyConstant.routeAuthen;
-  runApp(MyApp());
+Future<Null> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  String? type = preferences.getString('type');
+  print('## type ===>> $type');
+  if (type?.isEmpty ?? true) {
+    initlalRoute = MyConstant.routeAuthen;
+    runApp(MyApp());
+  } else {
+    switch (type) {
+      case 'Buyer':
+      initlalRoute = MyConstant.routeBuyerService;
+      runApp(MyApp());
+      break;
+      case 'Seller':
+      initlalRoute = MyConstant.routeSellerService;
+      runApp(MyApp());
+      break;
+      case 'Rider':
+      initlalRoute = MyConstant.routeriderService;
+      runApp(MyApp());
+      break;
+      default:
+       
+    }
+  }
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({ Key? key }) : super(key: key);
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
