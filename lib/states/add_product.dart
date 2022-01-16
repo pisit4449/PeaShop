@@ -9,6 +9,7 @@ import 'package:peashop/utility/my_constant.dart';
 import 'package:peashop/utility/my_dialog.dart';
 import 'package:peashop/widget/show_image.dart';
 import 'package:peashop/widget/show_title.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AddProduct extends StatefulWidget {
   const AddProduct({Key? key}) : super(key: key);
@@ -21,6 +22,10 @@ class _AddProductState extends State<AddProduct> {
   final formKey = GlobalKey<FormState>();
   List<File?> files = [];
   File? file;
+  TextEditingController nameController = TextEditingController();
+  TextEditingController priceController = TextEditingController();
+  TextEditingController detailController = TextEditingController();
+  List<String> paths = [];
 
   @override
   void initState() {
@@ -106,14 +111,34 @@ class _AddProductState extends State<AddProduct> {
         for (var item in files) {
           int i = Random().nextInt(1000000000);
           String nameFile = 'product$i.jpg';
+
+          paths.add('/product/$nameFile');
+
           Map<String, dynamic> map = {};
           map['file'] =
               await MultipartFile.fromFile(item!.path, filename: nameFile);
           FormData data = FormData.fromMap(map);
-          await Dio().post(apiSaveProduct, data: data).then((value) {
+          await Dio().post(apiSaveProduct, data: data).then((value) async {
             print('Upload Success');
             loop++;
             if (loop >= files.length) {
+              SharedPreferences preference =
+                  await SharedPreferences.getInstance();
+
+                  String idSeller = preference.getString('id')!;
+                  String nameSeller = preference.getString('name')!;
+                  String name = nameController.text;
+                  String price = priceController.text;
+                  String detail = detailController.text;
+                  String images = paths.toString();
+                  print('#### idSeller = $idSeller, nameSeller = $nameSeller');
+                  print('### name = $name, price = $price, detail = $detail');
+                  print('### images ==>> $images');
+
+                  String path = '${MyConstant.domain}/shoppingmall/insertProduct.php?isAdd=true&idSeller=$idSeller&nameSeller=$nameSeller&name=$name&price=$price&detail=$detail&images=$images';
+
+                  await Dio().get(path).then((value) => Navigator.pop(context));
+                  
               Navigator.pop(context);
             }
           });
@@ -257,7 +282,7 @@ class _AddProductState extends State<AddProduct> {
     return Container(
       width: constraints.maxWidth * 0.75,
       margin: EdgeInsets.only(top: 16),
-      child: TextFormField(
+      child: TextFormField(controller: nameController,
         validator: (value) {
           if (value!.isEmpty) {
             return 'Please Fill Name in Blank';
@@ -293,7 +318,7 @@ class _AddProductState extends State<AddProduct> {
     return Container(
       width: constraints.maxWidth * 0.75,
       margin: EdgeInsets.only(top: 16),
-      child: TextFormField(
+      child: TextFormField(controller: priceController,
         validator: (value) {
           if (value!.isEmpty) {
             return 'Please Fill Price in Blank';
@@ -330,7 +355,7 @@ class _AddProductState extends State<AddProduct> {
     return Container(
       width: constraints.maxWidth * 0.75,
       margin: EdgeInsets.only(top: 16),
-      child: TextFormField(
+      child: TextFormField(controller: detailController,
         validator: (value) {
           if (value!.isEmpty) {
             return 'Please Fill Detail in Blank';
