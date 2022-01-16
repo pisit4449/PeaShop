@@ -72,7 +72,7 @@ class _AuthenState extends State<Authen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
-          height: 55,
+          // height: 55,
           width: size * 0.6,
           margin: EdgeInsets.symmetric(vertical: 16),
           child: ElevatedButton(
