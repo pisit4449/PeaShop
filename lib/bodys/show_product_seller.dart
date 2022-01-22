@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:peashop/models/product_model.dart';
+import 'package:peashop/states/edit_product.dart';
 import 'package:peashop/utility/my_constant.dart';
 import 'package:peashop/widget/show_image.dart';
 import 'package:peashop/widget/show_progress.dart';
@@ -162,7 +163,16 @@ class _ShowProductSellerState extends State<ShowProductSeller> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          print('You Click Edit');
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EditProduct(
+                                  productModel: productModels[index],
+                                ),
+                              )).then((value) => loadValueFromAPI());
+                        },
                         icon: Icon(
                           Icons.edit_outlined,
                           size: 36,

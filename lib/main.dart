@@ -3,6 +3,7 @@ import 'package:peashop/states/add_product.dart';
 import 'package:peashop/states/authen.dart';
 import 'package:peashop/states/buyer_service.dart';
 import 'package:peashop/states/create_account.dart';
+import 'package:peashop/states/edit_profile_saler.dart';
 import 'package:peashop/states/rider_service.dart';
 import 'package:peashop/states/seller_service.dart';
 import 'package:peashop/utility/my_constant.dart';
@@ -15,6 +16,7 @@ final Map<String, WidgetBuilder> map = {
   '/sellerService': (BuildContext context) => SellerService(),
   '/riderService': (BuildContext context) => RiderService(),
   '/addProduct': (BuildContext context) => AddProduct(),
+  '/editProfileSaler': (BuildContext context) => EditProfileSaler(),
 };
 
 String? initlalRoute;
