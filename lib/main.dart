@@ -9,6 +9,8 @@ import 'package:peashop/states/seller_service.dart';
 import 'package:peashop/utility/my_constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'edit_profile_saler.dart';
+
 final Map<String, WidgetBuilder> map = {
   '/authen': (BuildContext context) => Authen(),
   '/createAccount': (BuildContext context) => CreateAccount(),
